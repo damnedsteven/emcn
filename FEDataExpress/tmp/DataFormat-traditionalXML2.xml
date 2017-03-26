@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<StateFactBook
+    xmlns:stateFactBook='http://www.xbrlsite.com/Demos/StateFactBook/TraditionalXML/StateFactBook2'
+    >
+            <State name='Alaska' population2009='698473' />
+            <State name='Alabama' population2009='4708708' />
+            <State name='Arkansas' population2009='2889450' />
+            <State name='Arizona' population2009='6595778' />
+            <State name='California' population2009='36961664' />
+            <State name='Colorado' population2009='5024748' />
+            <State name='Connecticut' population2009='3518288' />
+            <State name='Delaware' population2009='885122' />
+            <State name='Florida' population2009='18537969' />
+            <State name='Georgia' population2009='9829211' />
+            <State name='Hawaii' population2009='1295178' />
+            <State name='Iowa' population2009='3007856' />
+            <State name='Idaho' population2009='1545801' />
+            <State name='Illinois' population2009='12910409' />
+            <State name='Indiana' population2009='6423113' />
+            <State name='Kansas' population2009='2818747' />
+            <State name='Kentucky' population2009='4314113' />
+            <State name='Louisiana' population2009='4492076' />
+            <State name='Massachusetts' population2009='6593587' />
+            <State name='Maryland' population2009='5699478' />
+            <State name='Maine' population2009='1318301' />
+            <State name='Michigan' population2009='9969727' />
+            <State name='Minnesota' population2009='5266214' />
+            <State name='Missouri' population2009='5987580' />
+            <State name='Mississippi' population2009='2951996' />
+            <State name='Montana' population2009='974989' />
+            <State name='StatesAllDomain' population2009='306406893' />
+            <State name='NorthCarolina' population2009='9380884' />
+            <State name='NorthDakota' population2009='646844' />
+            <State name='Nebraska' population2009='1796619' />
+            <State name='NewHampshire' population2009='1324575' />
+            <State name='NewJersey' population2009='8707739' />
+            <State name='NewMexico' population2009='2009671' />
+            <State name='Nevada' population2009='2643085' />
+            <State name='NewYork' population2009='19541453' />
+            <State name='Ohio' population2009='11542645' />
+            <State name='Oklahoma' population2009='3687050' />
+            <State name='Oregon' population2009='3825657' />
+            <State name='Pennsylvania' population2009='12604767' />
+            <State name='RhodeIsland' population2009='1053209' />
+            <State name='SouthCarolina' population2009='4561242' />
+            <State name='SouthDakota' population2009='812383' />
+            <State name='Tennessee' population2009='6296254' />
+            <State name='Texas' population2009='24782302' />
+            <State name='Utah' population2009='2784572' />
+            <State name='Virginia' population2009='7882590' />
+            <State name='Vermont' population2009='621760' />
+            <State name='Washington' population2009='6664195' />
+            <State name='Wisconsin' population2009='5654774' />
+            <State name='WestVirginia' population2009='1819777' />
+            <State name='Wyoming' population2009='544270' />
+</StateFactBook>
