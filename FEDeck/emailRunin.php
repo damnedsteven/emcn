@@ -81,6 +81,8 @@ function mySendMail($my_addr,$my_subject,$my_msg){
 					Check_In IS NULL
 					AND 
 					HandoverTime IS NULL
+					AND
+					FEFlag = 1
 					"; 
 
 	$data = mssql_query($query,$dbc) or die('search db error ');
@@ -153,7 +155,7 @@ mssql_select_db(DB_NAME_70,$dbc) or die('can not open db table');
 			$today = date("Y-m-d");
 			$current = date("Y-m-d H:i:s");
 			//主题
-			$subject = "Run-In 结束超过 1 小时未处理订单: （每10分钟更新）";
+			$subject = "Run-In 结束超过 1 小时未处理订单: （每小时更新）";
 			//正文
 			$message = "<h1>{$current}</h1>";
 			$message .= "<b>以下为 Run-In 结束超过 1 小时未处理订单： </b>";

@@ -49,8 +49,8 @@
 					WHUpdateTime IS NOT NULL
 					AND
 					HandoverTime IS NULL
-					AND
-					FEFlag = 1
+					-- AND
+					-- FEFlag = 1
 					"; 
 
 	$data = mssql_query($query,$dbc) or die('search db error ');
@@ -68,6 +68,8 @@
 	mssql_free_result($data);
 	
 	require_once('parser_oct.php');//-----------------------------------------For Getting SFNG Data	
+	
+	require_once('parser_sn.php');//-----------------------------------------For Getting SFNG Data for SN
 
 	if (isset($OperationTime)) {
 		$strArr = array();
@@ -76,7 +78,7 @@
 			foreach ($v as $subk => $subv) {
 				foreach ($subv as $subsubk => $subsubv) {
 					array_push($strArr, "IF NOT EXISTS (SELECT * FROM OCT WHERE PLO = '{$k}' AND WO = '{$subk}' AND Operation = '{$subsubk}') 
-											INSERT INTO OCT (PLO, WO, Operation, Operation_Start, Operation_End, CreateTime, Priority) VALUES ('{$k}', '{$subk}', '{$subsubk}', '{$subsubv['start']}', '{$subsubv['end']}', GETDATE(), '{$subsubv['priority']}')"); 
+											INSERT INTO OCT (PLO, WO, Operation, Operation_Start, Operation_End, CreateTime, Priority, SN) VALUES ('{$k}', '{$subk}', '{$subsubk}', '{$subsubv['start']}', '{$subsubv['end']}', GETDATE(), '{$subsubv['priority']}', '{$SerialNumber[$subk]}')"); 
 				}
 			}
 		}
@@ -86,6 +88,7 @@
 		
 		mssql_close($dbc);
 	}
+	
 
 	// total
 	echo 'Total execution time in seconds: ' . (microtime(true) - $time_start);
