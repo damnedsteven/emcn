@@ -177,6 +177,9 @@
 			}
 		}
 		
+	} elseif (isset($_GET['PLO'])) {
+		$query .=" PCTMaster.PLO IN ({$_GET['PLO']})
+					";
 	} else {
 		$query .=" PGITime >= dateadd(day,datediff(day,1,GETDATE()),0)
 				   AND 

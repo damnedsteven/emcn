@@ -391,8 +391,8 @@
 								echo '<td>TBD</td>';
 							}
 							// 备注
-							if (isset($row['Comment7']) && trim($row['Comment7']) <> '') {
-								echo "<td bgcolor=\"#FFC7CE\"><a target = '_blank' href=\"./comment.php?PLO=".$row['PLO']."&comment=".$row['Comment7']."&comment2=".$row['Comment7_2']."\">".$row['Comment7']." - ".$row['Comment7_2']."</a></td>";
+							if (isset($row['Comment4']) && trim($row['Comment4']) <> '') {
+								echo "<td bgcolor=\"#FFC7CE\"><a target = '_blank' href=\"./comment.php?PLO=".$row['PLO']."&comment=".$row['Comment4']."&comment2=".$row['Comment5']."\">".$row['Comment4']." - ".$row['Comment5']."</a></td>";
 							} elseif (isset($row['Comment']) && trim($row['Comment']) <> '') {
 								echo "<td bgcolor=\"#FFC7CE\"><a target = '_blank' href=\"./comment.php?PLO=".$row['PLO']."&comment=".$row['Comment']."&comment2=".$row['Comment3']."&comment3=".$row['Comment2']."\">".$row['Comment']." - ".$row['Comment2']."</a></td>";
 							} else {
