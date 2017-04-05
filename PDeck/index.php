@@ -2,24 +2,20 @@
 //---------------------------------
 	// Insert the page header
 	$page_title = 'Main';
-	require_once('header.php');
 	
-	$page = $_SERVER['PHP_SELF'];
-	$sec = "300";
-	header("Refresh: $sec; url=$page");
+	require_once('header.php');
 	
 	require_once('navmenu.php');
 	
 	require_once('connectvars.php');
 	
-	date_default_timezone_set("Asia/Shanghai");
-	
 	require_once('overlap.php');//调用overlap算法
 	
 	// Unit: Hour
-	$Target_TAT_Assy = 1;
-	$Target_TAT_Test = 4;
-	$Target_TAT_HO = 2;
+	$Target_TAT_Assy = 12;
+	$Target_TAT_Test = 24;
+	$Target_TAT_HO = 6;
+	$Target_TAT_P = 42;
 	
 	// $Target_TAT_Checkout_Arr = array('tencent' => 4); // define specific targets
 //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,7 +74,7 @@
 			
 			echo '<input type="submit" name="submit" value="查找" />';
 			
-			echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp (Unit: hour) &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
+			echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp (Unit: hour)';
 			
 			
 			echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
@@ -135,7 +131,12 @@
 							PLO
 						) T
 						ON PCTMaster.PLO = T.PLO
+						LEFT JOIN
+						ProductFamily
+						ON PCTMaster.Family=ProductFamily.ProductFamily AND (PCTMaster.ConfigType=ProductFamily.ConfigType OR PCTMaster.ConfigType is NULL)
 					WHERE
+						ProductFamily.ConfigType NOT IN ('PPS Option', 'PPS Option 3F')
+						AND
 						(SO NOT LIKE 'PRP%' OR SO IS NULL)
 						AND
 					";
@@ -159,6 +160,9 @@
 				";
 			}
 		}
+	} elseif (isset($_GET['PLO'])) {
+			$query .=" T.PLO IN ({$_GET['PLO']})
+				";
 	} else { // by default
 		$query .="  BirthDate IS NOT NULL
 					AND
@@ -167,7 +171,6 @@
 				    HandoverTime DESC
 			"; 
 	}
-	
 
 	if (true) {		
 		echo '<table width=100%>';
@@ -181,6 +184,9 @@
 					echo '<th>PLO</th>';
 					echo '<th>Family</th>';
 					echo '<th>Model</th>';
+					echo '<th>SKU#</th>';
+					echo '<th>QTY</th>';
+					echo '<th>FE?</th>';
 					echo '<th>备料结束时间</th>';
 					echo '<th data-tsorter="numeric">Assy TAT</th>';
 					echo '<th>装配结束时间</th>';
@@ -188,6 +194,7 @@
 					echo '<th>测试结束时间</th>';
 					echo '<th data-tsorter="numeric">Handover TAT</th>';
 					echo '<th>Handover</th>';
+					echo '<th data-tsorter="numeric">P TAT</th>';
 					echo '<th>备注</th>';
 				echo '</tr>';
 				echo '</thead>';
@@ -254,6 +261,28 @@
 							// Model
 							if (isset($row['Model'])) {
 								echo '<td>'.$row['Model'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// SKU
+							if (isset($row['Product'])) {
+								echo '<td>'.$row['Product'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// QTY
+							if (isset($row['PLOQTY'])) {
+								echo '<td>'.$row['PLOQTY'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// Is Fe Order?
+							if (isset($row['FEFlag'])) {
+								if ($row['FEFlag'] == 1) {
+									echo '<td>Y</td>';		
+								} else {
+									echo '<td>N</td>';
+								}
 							} else {
 								echo '<td>TBD</td>';
 							}
@@ -338,6 +367,26 @@
 							// Handover
 							if (isset($row['HandoverTime'])) {
 								echo '<td>'.$row['HandoverTime'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// P TAT
+							if (isset($row['WHUpdateTime'])) {
+								if (isset($row['HandoverTime'])) {
+									$TAT_P[trim($row['PLO'])] = ol($row['WHUpdateTime'], $row['HandoverTime']);
+									if ($TAT_P[trim($row['PLO'])] <= $Target_TAT_P) {
+										echo '<td bgcolor=\'#C6EFCE\'>'.$TAT_P[trim($row['PLO'])].'</td>';
+									} else {
+										echo '<td bgcolor=\'#FFC7CE\'>'.$TAT_P[trim($row['PLO'])].'</td>';
+									}
+								} else {
+									$GAP_P[trim($row['PLO'])] = ol($row['WHUpdateTime'], date('Y-m-d H:i:s'));
+									if ($GAP_P[trim($row['PLO'])] <= $Target_TAT_P) {
+										echo '<td bgcolor=\'#C6EFCE\'>TBD</td>';
+									} else {
+										echo '<td bgcolor=\'#FFC7CE\'>TBD</td>';
+									}
+								}
 							} else {
 								echo '<td>TBD</td>';
 							}

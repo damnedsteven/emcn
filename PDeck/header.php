@@ -6,14 +6,15 @@
 
 <?php
 	//Refresh every 5 mins
-	$page = $_SERVER['PHP_SELF'];
-	$sec = "300";
-	header("Refresh: $sec; url=$page");
+	// $page = $_SERVER['PHP_SELF'];
+	// $sec = "300";
+	// header("Refresh: $sec; url=$page");
 	//Set correct local time
 	date_default_timezone_set('Asia/Shanghai'); 
+	
 	error_reporting(E_ALL ^ E_NOTICE);
 	
-	echo '<title>Factory Express Deck - ' . $page_title . '</title>';
+	echo '<title>PCT Breakdown - ' . $page_title . '</title>';
 ?>
 
   <link rel="stylesheet" type="text/css" href="style.css" />
@@ -23,5 +24,5 @@
 <a href="index.php"><img src="images/HPE_log_left_wht.png" alt="HPE Logo" align="right" border=0 /></a>
 
 <?php
-  echo '<h3>Factory Express Deck - ' . $page_title . '</h3>';
+  echo '<h3>Production Cycle Time Breakdown - ' . $page_title . '</h3>';
 ?>

@@ -212,9 +212,13 @@
 				   BirthDate >= '2016-10-01 00:00:00'
 				   ORDER BY
 				   BirthDate DESC
+		";	 
+	} elseif (isset($_GET['PLO'])) {
+		$query .="  Picklist.PLO IS NOT NULL
+					AND
+					Picklist.PLO IN ({$_GET['PLO']})
 		";	
-	  // by default
-	} else {
+	} else { // by default
 		echo '<h1>两天内所有新订单 </h1>';
 		
 		$query .="  Picklist.PLO IS NOT NULL
