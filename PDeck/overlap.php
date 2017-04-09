@@ -25,15 +25,15 @@ function date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d' ) 
 	return $dates;
 }
 
-function overlapping($startdate,$enddate,$workinghours) {
+function overlapping($startdate,$enddate,$workingdays,$workinghours) {
 	// $start_date = date_format($startdate, 'Y-m-d');
 	// $end_date = date_format($enddate, 'Y-m-d');
 	$dates = date_range($startdate,$enddate);
 	$startdate = strtotime($startdate);
 	$enddate = strtotime($enddate);
 	
-	$working_days = array(2,3,4,5,6); // Tuesday-->Saturday
-	$working_hours = $workinghours; 
+	$working_days = $workingdays; // --------------------------------
+	$working_hours = $workinghours;
 	$beg_h = floor($working_hours[0]); $beg_m = ($working_hours[0]*60)%60;
 	$end_h = floor($working_hours[1]); $end_m = ($working_hours[1]*60)%60;
 	$hours = 0;
@@ -65,12 +65,13 @@ function overlapping($startdate,$enddate,$workinghours) {
 function ol($start, $end) {
 	// $start = "2016-06-01 23:58:34";
 	// $end = "2016-06-02 03:46:20";
-
-	$whs = array(array(0, 4.5),array(8.5, 11),array(12, 16.5),array(20.5, 23));
+	$wd = array(1,2,3,4,5);
+	
+	$whs = array(array(0, 24)); // --------------------------------24h
 
 	$ol = 0;
 	foreach ($whs as $wh) {
-		$ol += overlapping($start, $end, $wh);
+		$ol += overlapping($start, $end, $wd, $wh);
 	}
 // var_dump(round($ol, 1));
 	return round($ol, 1);
