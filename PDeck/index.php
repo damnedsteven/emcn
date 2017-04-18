@@ -122,8 +122,10 @@
 							MAX (CASE WHEN Operation = 'BF20_TSG_BUILD2' THEN Operation_End END) BUILD2_End,
 							MAX (CASE WHEN Operation = 'BF20_TSG_BUILD3' THEN Operation_End END) BUILD3_End,
 							MAX (CASE WHEN Operation = 'BF20_TSG_BUILD4' THEN Operation_End END) BUILD4_End,
-							MAX (CASE WHEN Operation = 'PRETEST' THEN Operation_Start END) Pretest_Start,
-							MAX (CASE WHEN Operation = 'RUNIN' THEN Operation_End END) Runin_End,
+							MAX (CASE WHEN Operation = 'BF20_TSG_BUILD5' THEN Operation_End END) BUILD5_End,
+							MAX (CASE WHEN Operation = 'EVA_SPU_BUILD1' THEN Operation_End END) BUILD_End,
+							MAX (CASE WHEN Operation IN ('PRETEST', 'EL_ENCL_TEST') THEN Operation_Start END) Pretest_Start,
+							MAX (CASE WHEN Operation IN ('RUNIN', 'CCT_TEST') THEN Operation_End END) Runin_End,
 							MAX (CASE WHEN Operation = 'BF20_TSG_CUSINTCHK' THEN Operation_End END) Check_Out
 						  FROM 
 							OCT
@@ -208,9 +210,13 @@
 					if (isset($row['WHUpdateTime'])) {
 						$row['WHUpdateTime'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['WHUpdateTime']), 'Y-m-d H:i:s');
 					}
-					if (isset($row['Pretest_Start'])) {
-						$tmp = max($row['BUILD1_End'], $row['BUILD2_End'], $row['BUILD3_End'], $row['BUILD4_End']);
-						$AssyPass[trim($row['PLO'])] = date_format(date_create_from_format('M d Y  h:i:s:ua', $tmp), 'Y-m-d H:i:s');
+					if (isset($row['BUILD_End'])) {
+						$AssyPass[trim($row['PLO'])] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['BUILD_End']), 'Y-m-d H:i:s');
+					} else {
+						if (isset($row['Pretest_Start'])) {
+							$tmp = max($row['BUILD1_End'], $row['BUILD2_End'], $row['BUILD3_End'], $row['BUILD4_End'], $row['BUILD5_End']);
+							$AssyPass[trim($row['PLO'])] = date_format(date_create_from_format('M d Y  h:i:s:ua', $tmp), 'Y-m-d H:i:s');
+						}
 					}
 					if ($row['FEFlag'] === 1 ) {
 						if (isset($row['Check_Out'])) {
@@ -313,7 +319,7 @@
 								echo '<td>TBD</td>';
 							}
 							// 装配结束时间 - Assy Pass
-							if (isset($row['Pretest_Start'])) {
+							if (isset($AssyPass[trim($row['PLO'])])) {
 								echo '<td>'.$AssyPass[trim($row['PLO'])].'</td>';
 							} else {
 								echo '<td>TBD</td>';
