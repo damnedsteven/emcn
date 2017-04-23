@@ -25,11 +25,11 @@
 		</select>
 	
 	<br/>
-	<select name="comment3" id="comment3"></select>
+	<select name="comment2" id="comment2"></select>
 	<br/><br/>
 
-	<label for="comment2"> 详因: </label><br>
-	<textarea name="comment2" id="comment2" rows="5" cols="50"><?php if (isset($_GET['comment2'])) {echo $_GET['comment2'];} ?></textarea><br><br>
+	<label for="comment3"> 详因: </label><br>
+	<textarea name="comment3" id="comment3" rows="5" cols="50"><?php if (isset($_GET['comment3'])) {echo $_GET['comment3'];} ?></textarea><br><br>
 	
 	<input type="radio" name="applyto" value="plo" checked> 添加到: PLO#<?php echo $_GET['PLO']; ?>
 	

@@ -198,6 +198,7 @@
 					echo '<th>Handover</th>';
 					echo '<th data-tsorter="numeric">P TAT</th>';
 					echo '<th>备注</th>';
+					echo '<th>详情</th>';
 				echo '</tr>';
 				echo '</thead>';
 				
@@ -397,13 +398,19 @@
 								echo '<td>TBD</td>';
 							}
 							// 备注
-							if (isset($row['Comment4']) && trim($row['Comment4']) <> '') {
-								echo "<td bgcolor=\"#FFC7CE\"><a target = '_blank' href=\"./comment.php?PLO=".$row['PLO']."&comment=".$row['Comment4']."&comment2=".$row['Comment5']."\">".$row['Comment4']." - ".$row['Comment5']."</a></td>";
-							} elseif (isset($row['Comment']) && trim($row['Comment']) <> '') {
-								echo "<td bgcolor=\"#FFC7CE\"><a target = '_blank' href=\"./comment.php?PLO=".$row['PLO']."&comment=".$row['Comment']."&comment2=".$row['Comment3']."&comment3=".$row['Comment2']."\">".$row['Comment']." - ".$row['Comment2']."</a></td>";
+							if ($TAT_P[trim($row['PLO'])] > $Target_TAT_P) {
+								if (isset($row['Comment4']) && trim($row['Comment4']) <> '') {
+									echo "<td bgcolor=\"#FFC7CE\"><a target = '_blank' href=\"./comment.php?PLO=".$row['PLO']."&comment=".$row['Comment4']."&comment2=".$row['Comment5']."&comment3=".$row['Comment6']."\">".$row['Comment4']." - ".$row['Comment5']."</a></td>";
+									echo "<td bgcolor=\"#FFC7CE\">".$row['Comment6']."</td>";
+								}  else {
+									echo "<td bgcolor=\"#FFC7CE\"><a target = '_blank' href=\"./comment.php?PLO=".$row['PLO']."\">>Add<</a></td>";
+									echo "<td bgcolor=\"#FFC7CE\"></td>";
+								}
 							} else {
-								echo "<td><a target = '_blank' href=\"./comment.php?PLO=".$row['PLO']."\">>Add<</a></td>";
+								echo '<td>N/A</td>';
+								echo '<td>N/A</td>';
 							}
+							
 						echo '</tr>';
 				}
 				echo '</table>';
