@@ -12,9 +12,10 @@
 	require_once('overlap.php');//调用overlap算法
 	
 	// Unit: Hour
-	$Target_TAT_Assy = 12;
-	$Target_TAT_Test = 24;
-	$Target_TAT_HO = 6;
+	$Target_TAT_PreAssy = 8;
+	$Target_TAT_Assy = 8;
+	$Target_TAT_Test = 18.5;
+	$Target_TAT_HO = 7.5;
 	$Target_TAT_P = 42;
 	
 	// $Target_TAT_Checkout_Arr = array('tencent' => 4); // define specific targets
@@ -137,6 +138,8 @@
 						ProductFamily
 						ON PCTMaster.Family=ProductFamily.ProductFamily AND (PCTMaster.ConfigType=ProductFamily.ConfigType OR PCTMaster.ConfigType is NULL)
 					WHERE
+						Family LIKE '%TSG%'
+						AND
 						ProductFamily.ConfigType NOT IN ('PPS Option', 'PPS Option 3F')
 						AND
 						(SO NOT LIKE 'PRP%' OR SO IS NULL)
@@ -189,7 +192,9 @@
 					echo '<th>SKU#</th>';
 					echo '<th>QTY</th>';
 					echo '<th>FE?</th>';
-					echo '<th>备料结束时间</th>';
+					echo '<th>WH备料结束时间</th>';
+					echo '<th data-tsorter="numeric">PreAssy TAT</th>';
+					echo '<th>P备料结束时间</th>';
 					echo '<th data-tsorter="numeric">Assy TAT</th>';
 					echo '<th>装配结束时间</th>';
 					echo '<th data-tsorter="numeric">Test TAT</th>';
@@ -210,6 +215,12 @@
 					// formatting
 					if (isset($row['WHUpdateTime'])) {
 						$row['WHUpdateTime'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['WHUpdateTime']), 'Y-m-d H:i:s');
+					}
+					if (isset($row['MailSendTime'])) {
+						$row['MailSendTime'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['MailSendTime']), 'Y-m-d H:i:s');
+					}
+					if (isset($row['LineInputTime'])) {
+						$row['LineInputTime'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['LineInputTime']), 'Y-m-d H:i:s');
 					}
 					if (isset($row['BUILD_End'])) {
 						$AssyPass[trim($row['PLO'])] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['BUILD_End']), 'Y-m-d H:i:s');
@@ -293,27 +304,53 @@
 							} else {
 								echo '<td>TBD</td>';
 							}
-							// 备料结束时间 - MR
+							// 备料结束时间 - WH
 							if (isset($row['WHUpdateTime'])) {
 								echo '<td>'.$row['WHUpdateTime'].'</td>';
 							} else {
 								echo '<td>TBD</td>';
 							}
-							// Assy TAT
+							// PreAssy TAT
 							if (isset($row['WHUpdateTime'])) {
+								if (isset($row['LineInputTime'])) {
+									$TAT_PreAssy[trim($row['PLO'])] = ol($row['WHUpdateTime'], $row['LineInputTime']);
+									if ($TAT_PreAssy[trim($row['PLO'])] <= $Target_TAT_PreAssy) {
+										echo '<td bgcolor=\'#C6EFCE\'>'.$TAT_PreAssy[trim($row['PLO'])].'</td>';
+									} else {
+										echo '<td bgcolor=\'#FFC7CE\'>'.$TAT_PreAssy[trim($row['PLO'])].'</td>';
+									}
+								} else {
+									$GAP_PreAssy[trim($row['PLO'])] = ol($row['WHUpdateTime'], date('Y-m-d H:i:s'));
+									if ($GAP_PreAssy[trim($row['PLO'])] <= $Target_TAT_PreAssy) {
+										echo '<td bgcolor=\'#C6EFCE\'>剩余: '.($Target_TAT_PreAssy - $GAP_PreAssy[trim($row['PLO'])]).'</td>';
+									} else {
+										echo '<td bgcolor=\'#FFC7CE\'>超时: '.($GAP_PreAssy[trim($row['PLO'])] - $Target_TAT_PreAssy).'</td>';
+									}
+								}
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// 备料结束时间 - P
+							if (isset($row['LineInputTime'])) {
+								echo '<td>'.$row['LineInputTime'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// Assy TAT
+							if (isset($row['LineInputTime'])) {
 								if (isset($AssyPass[trim($row['PLO'])])) {
-									$TAT_Assy[trim($row['PLO'])] = ol($row['WHUpdateTime'], $AssyPass[trim($row['PLO'])]);
+									$TAT_Assy[trim($row['PLO'])] = ol($row['LineInputTime'], $AssyPass[trim($row['PLO'])]);
 									if ($TAT_Assy[trim($row['PLO'])] <= $Target_TAT_Assy) {
 										echo '<td bgcolor=\'#C6EFCE\'>'.$TAT_Assy[trim($row['PLO'])].'</td>';
 									} else {
 										echo '<td bgcolor=\'#FFC7CE\'>'.$TAT_Assy[trim($row['PLO'])].'</td>';
 									}
 								} else {
-									$GAP_Assy[trim($row['PLO'])] = ol($row['WHUpdateTime'], date('Y-m-d H:i:s'));
+									$GAP_Assy[trim($row['PLO'])] = ol($row['LineInputTime'], date('Y-m-d H:i:s'));
 									if ($GAP_Assy[trim($row['PLO'])] <= $Target_TAT_Assy) {
-										echo '<td bgcolor=\'#C6EFCE\'>TBD</td>';
+										echo '<td bgcolor=\'#C6EFCE\'>剩余: '.($Target_TAT_Assy - $GAP_Assy[trim($row['PLO'])]).'</td>';
 									} else {
-										echo '<td bgcolor=\'#FFC7CE\'>TBD</td>';
+										echo '<td bgcolor=\'#FFC7CE\'>超时: '.($GAP_Assy[trim($row['PLO'])] - $Target_TAT_Assy).'</td>';
 									}
 								}
 							} else {
@@ -337,9 +374,9 @@
 								} else {
 									$GAP_Test[trim($row['PLO'])] = ol($AssyPass[trim($row['PLO'])], date('Y-m-d H:i:s'));
 									if ($GAP_Test[trim($row['PLO'])] <= $Target_TAT_Test) {
-										echo '<td bgcolor=\'#C6EFCE\'>TBD</td>';
+										echo '<td bgcolor=\'#C6EFCE\'>剩余: '.($Target_TAT_Test - $GAP_Test[trim($row['PLO'])]).'</td>';
 									} else {
-										echo '<td bgcolor=\'#FFC7CE\'>TBD</td>';
+										echo '<td bgcolor=\'#FFC7CE\'>超时: '.($GAP_Test[trim($row['PLO'])] - $Target_TAT_Test).'</td>';
 									}
 								}
 							} else {
@@ -363,9 +400,9 @@
 								} else {
 									$GAP_HO[trim($row['PLO'])] = ol($TestPass[trim($row['PLO'])], date('Y-m-d H:i:s'));
 									if ($GAP_HO[trim($row['PLO'])] <= $Target_TAT_HO) {
-										echo '<td bgcolor=\'#C6EFCE\'>TBD</td>';
+										echo '<td bgcolor=\'#C6EFCE\'>剩余: '.($Target_TAT_HO - $GAP_HO[trim($row['PLO'])]).'</td>';
 									} else {
-										echo '<td bgcolor=\'#FFC7CE\'>TBD</td>';
+										echo '<td bgcolor=\'#FFC7CE\'>超时: '.($GAP_HO[trim($row['PLO'])] - $Target_TAT_HO).'</td>';
 									}
 								}
 							} else {
@@ -389,16 +426,16 @@
 								} else {
 									$GAP_P[trim($row['PLO'])] = ol($row['WHUpdateTime'], date('Y-m-d H:i:s'));
 									if ($GAP_P[trim($row['PLO'])] <= $Target_TAT_P) {
-										echo '<td bgcolor=\'#C6EFCE\'>TBD</td>';
+										echo '<td bgcolor=\'#C6EFCE\'>剩余: '.($Target_TAT_P - $GAP_P[trim($row['PLO'])]).'</td>';
 									} else {
-										echo '<td bgcolor=\'#FFC7CE\'>TBD</td>';
+										echo '<td bgcolor=\'#FFC7CE\'>超时: '.($GAP_P[trim($row['PLO'])] - $Target_TAT_P).'</td>';
 									}
 								}
 							} else {
 								echo '<td>TBD</td>';
 							}
 							// 备注
-							if ($TAT_P[trim($row['PLO'])] > $Target_TAT_P) {
+							if ($TAT_P[trim($row['PLO'])] > $Target_TAT_P || $TAT_PreAssy[trim($row['PLO'])] > $Target_TAT_PreAssy || $TAT_Assy[trim($row['PLO'])] > $Target_TAT_Assy || $TAT_Test[trim($row['PLO'])] > $Target_TAT_Test || $TAT_HO[trim($row['PLO'])] > $Target_TAT_HO) {
 								if (isset($row['Comment4']) && trim($row['Comment4']) <> '') {
 									echo "<td bgcolor=\"#FFC7CE\"><a target = '_blank' href=\"./comment.php?PLO=".$row['PLO']."&comment=".$row['Comment4']."&comment2=".$row['Comment5']."&comment3=".$row['Comment6']."\">".$row['Comment4']." - ".$row['Comment5']."</a></td>";
 									echo "<td bgcolor=\"#FFC7CE\">".$row['Comment6']."</td>";

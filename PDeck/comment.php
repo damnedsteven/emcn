@@ -119,7 +119,7 @@ if (isset($_GET['comment3'])) {
 		if (isset($_POST['applyto'])) {
 			if ($_POST['applyto'] == 'seta') {
 				$query = "  UPDATE PCTMaster 
-							SET Comment4='{$_POST['comment']}', Comment5='{$_POST['comment3']}', Comment6='{$_POST['comment2']}' 
+							SET Comment4='{$_POST['comment']}', Comment5='{$_POST['comment2']}', Comment6='{$_POST['comment3']}' 
 							WHERE PLO IN (SELECT PLO FROM PCTMaster WHERE {$_POST['set_a']}=(SELECT {$_POST['set_a']} FROM PCTMaster WHERE PLO='{$_GET['PLO']}'))
 				";
 			} elseif ($_POST['applyto'] == 'setb') {
@@ -127,7 +127,7 @@ if (isset($_GET['comment3'])) {
 					$startdate = date('Y-m-d H:i:s', strtotime($_POST['startdate']));
 					$enddate = date('Y-m-d H:i:s', strtotime($_POST['enddate']));
 					$query = "  UPDATE PCTMaster 
-								SET Comment4='{$_POST['comment']}', Comment5='{$_POST['comment3']}', Comment6='{$_POST['comment2']}' 
+								SET Comment4='{$_POST['comment']}', Comment5='{$_POST['comment2']}', Comment6='{$_POST['comment3']}' 
 								WHERE PLO IN (SELECT PLO FROM PCTMaster WHERE {$_POST['set_b']}=(SELECT {$_POST['set_b']} FROM PCTMaster WHERE PLO='{$_GET['PLO']}'))
 								AND
 								PGITime BETWEEN '{$startdate}' and '{$enddate}'
@@ -143,9 +143,9 @@ if (isset($_GET['comment3'])) {
 					} 
 					$entry = "'".implode("','", $entryArr)."'";
 				}
-				$query = "UPDATE PCTMaster SET Comment4='{$_POST['comment']}', Comment5='{$_POST['comment3']}', Comment6='{$_POST['comment2']}' WHERE PLO IN ({$entry}) ";
+				$query = "UPDATE PCTMaster SET Comment4='{$_POST['comment']}', Comment5='{$_POST['comment2']}', Comment6='{$_POST['comment3']}' WHERE PLO IN ({$entry}) ";
 			} else {
-				$query = "UPDATE PCTMaster SET Comment4='{$_POST['comment']}', Comment5='{$_POST['comment3']}', Comment6='{$_POST['comment2']}' WHERE PLO='{$_GET['PLO']}' ";
+				$query = "UPDATE PCTMaster SET Comment4='{$_POST['comment']}', Comment5='{$_POST['comment2']}', Comment6='{$_POST['comment3']}' WHERE PLO='{$_GET['PLO']}' ";
 			}
 		} 
 		// var_dump($query);
