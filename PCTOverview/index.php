@@ -20,6 +20,8 @@
 	
 	$Max_Gap_C = 6;
 	
+	$Target_TAT_TD = 8;
+	
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 
 	echo '<div class="input">';
@@ -123,6 +125,8 @@
 					Comment10,
 					Comment11,
 					Comment12,
+					logtime,
+					closetime,
 					CusName,
 					EndCusName,
 					ShippingName,
@@ -139,6 +143,9 @@
 					LEFT JOIN
 					ProductFamily
 					ON PCTMaster.Family=ProductFamily.ProductFamily AND (PCTMaster.ConfigType=ProductFamily.ConfigType OR PCTMaster.ConfigType is NULL)
+					LEFT JOIN
+					TechDirect.dbo.TechDirect
+					ON PCTMaster.TDNo=TechDirect.id
 				  WHERE 
 					";
 	if (isset($submit)) {
@@ -253,6 +260,8 @@
 				  echo '<th>Owner</th>';
 				  echo '<th>Egoras Fail</th>';
 				  echo '<th>Details</th>';
+				  echo '<th>TD#</th>';
+				  echo '<th>TD solution time</th>';
 				echo '</tr>';
 				echo '</thead>';
 				
@@ -273,6 +282,12 @@
 					}
 					if (isset($row['PGITime'])) {
 						$row['PGITime'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['PGITime']), 'Y-m-d H:i:s');
+					}
+					if (isset($row['logtime'])) {
+						$row['logtime'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['logtime']), 'Y-m-d H:i:s');
+					}
+					if (isset($row['closetime'])) {
+						$row['closetime'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['closetime']), 'Y-m-d H:i:s');
 					}
 
 					if (isset($row['BirthDate']) && isset($row['WHUpdateTime'])) {
@@ -510,6 +525,33 @@
 							} else {
 								echo "<td><a target = '_blank' href=\"./egoras.php?PLO=".$row['PLO']."\">->Add<-</a></td>";
 								echo "<td></td>";
+							}
+							
+							if (isset($row['TDNo'])) {
+								echo "<td bgcolor=\"#FFFF99\"><a target = '_blank' href=\"./td.php?PLO=".$row['PLO']."&comment=".$row['TDNo']."\">".$row['TDNo']."</a></td>";						
+								// TD TAT
+								if (isset($row['logtime'])) {
+									if (isset($row['closetime'])) {var_dump($row['closetime']);
+										$TAT_TD[trim($row['PLO'])] = ol_line($row['logtime'], $row['closetime']);
+										if ($TAT_TD[trim($row['PLO'])] <= $Target_TAT_TD) {
+											echo '<td bgcolor=\'#C6EFCE\'>'.$TAT_TD[trim($row['PLO'])].'</td>';
+										} else {
+											echo '<td bgcolor=\'#FFC7CE\'>'.$TAT_TD[trim($row['PLO'])].'</td>';
+										}
+									} else {
+										$GAP_TD[trim($row['PLO'])] = ol_line($row['logtime'], date('Y-m-d H:i:s'));
+										if ($GAP_TD[trim($row['PLO'])] <= $Target_TAT_TD) {
+											echo '<td bgcolor=\'#C6EFCE\'>剩余: '.($Target_TAT_TD - $GAP_TD[trim($row['PLO'])]).'</td>';
+										} else {
+											echo '<td bgcolor=\'#FFC7CE\'>超时: '.($GAP_TD[trim($row['PLO'])] - $Target_TAT_TD).'</td>';
+										}
+									}
+								} else {
+									echo '<td>TBD</td>';
+								}
+							} else {
+								echo "<td><a target = '_blank' href=\"./td.php?PLO=".$row['PLO']."\">->Add<-</a></td>";
+								echo "<td>N/A</td>";
 							}
 						echo '</tr>';
 				}

@@ -22,6 +22,8 @@
 	$Target_TAT_Checkout = 12; // default 12 hours
 	
 	$Target_TAT_Checkout_Arr = array('tencent' => 4); // define specific targets
+	
+	$Target_TAT_AP = 48;
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 
 	echo '<div class="input">';
@@ -137,11 +139,15 @@
 							PLO,
 							WO,
 							Priority,
+							MAX (CASE WHEN Operation = 'BF20_TSG_BUILD1' THEN Operation_Start END) BUILD1_Start,
+							MAX (CASE WHEN Operation = 'PRETEST' THEN Operation_Start END) Pretest_Start,
 							MAX (CASE WHEN Operation = 'PRETEST' THEN Operation_End END) Pretest_End,
 							MAX (CASE WHEN Operation = 'RUNIN' THEN Operation_Start END) Runin_Start,
 							MAX (CASE WHEN Operation = 'RUNIN' THEN Operation_End END) Runin_End,
 							MAX (CASE WHEN Operation = 'BF20_TSG_CUSINTENT' THEN Operation_End END) Check_In,
-							MAX (CASE WHEN Operation = 'BF20_TSG_CUSINTCHK' THEN Operation_End END) Check_Out
+							MAX (CASE WHEN Operation = 'BF20_TSG_CUSINTCHK' THEN Operation_End END) Check_Out,
+							MAX (CASE WHEN Operation = 'BF20_TSG_HIPOT' THEN Operation_Start END) Packing_Start,
+							MAX (CASE WHEN Operation = 'BF20_TSG_PACK' THEN Operation_End END) Packing_End
 						  FROM 
 							OCT
 						  GROUP BY
@@ -248,12 +254,16 @@
 					echo '<th>SN</th>';
 					echo '<th>BKPL</th>';
 					echo '<th>备料结束时间</th>';
-					echo '<th>PreTest 结束时间</th>';
+					echo '<th>装配开始时间</th>';
+					echo '<th>PreTest 开始时间</th>';
 					echo '<th>RunIn 结束时间</th>';
 					echo '<th data-tsorter="numeric">进站 TAT</th>';
 					echo '<th>FE Check In</th>';
 					echo '<th data-tsorter="numeric">出站 TAT</th>';
 					echo '<th>FE Check Out</th>';
+					echo '<th>包装开始时间</th>';
+					echo '<th>包装结束时间</th>';
+					echo '<th data-tsorter="numeric">装配-包装 TAT</th>';
 					echo '<th>Handover</th>';
 					echo '<th>PGI</th>';
 					echo '<th>备注</th>';
@@ -272,6 +282,12 @@
 					if (isset($row['WHUpdateTime'])) {
 						$row['WHUpdateTime'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['WHUpdateTime']), 'Y-m-d H:i:s');
 					}
+					if (isset($row['BUILD1_Start'])) {
+						$row['BUILD1_Start'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['BUILD1_Start']), 'Y-m-d H:i:s');
+					}
+					if (isset($row['Pretest_Start'])) {
+						$row['Pretest_Start'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['Pretest_Start']), 'Y-m-d H:i:s');
+					}
 					if (isset($row['Pretest_End'])) {
 						$row['Pretest_End'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['Pretest_End']), 'Y-m-d H:i:s');
 					}
@@ -286,6 +302,12 @@
 					}
 					if (isset($row['Check_Out'])) {
 						$row['Check_Out'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['Check_Out']), 'Y-m-d H:i:s');
+					}
+					if (isset($row['Packing_Start'])) {
+						$row['Packing_Start'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['Packing_Start']), 'Y-m-d H:i:s');
+					}
+					if (isset($row['Packing_End'])) {
+						$row['Packing_End'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['Packing_End']), 'Y-m-d H:i:s');
 					}
 					if (isset($row['HandoverTime'])) {
 						$row['HandoverTime'] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['HandoverTime']), 'Y-m-d H:i:s');
@@ -378,9 +400,15 @@
 							} else {
 								echo '<td>TBD</td>';
 							}
-							// PreTest 结束时间
-							if (isset($row['Pretest_End'])) {
-								echo '<td>'.$row['Pretest_End'].'</td>';
+							// BUILD1 开始时间
+							if (isset($row['BUILD1_Start'])) {
+								echo '<td>'.$row['BUILD1_Start'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// PreTest 开始时间
+							if (isset($row['Pretest_Start'])) {
+								echo '<td>'.$row['Pretest_Start'].'</td>';
 							} else {
 								echo '<td>TBD</td>';
 							}
@@ -439,6 +467,38 @@
 							// FE Check Out
 							if (isset($row['Check_Out'])) {
 								echo '<td>'.$row['Check_Out'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// Packing Start
+							if (isset($row['Packing_Start'])) {
+								echo '<td>'.$row['Packing_Start'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// Packing End
+							if (isset($row['Packing_End'])) {
+								echo '<td>'.$row['Packing_End'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// 装配A-包装P TAT
+							if (isset($row['BUILD1_Start'])) {
+								if (isset($row['Packing_End'])) {
+									$TAT_AP[trim($row['WO'])] = ol($row['BUILD1_Start'], $row['Packing_End']);
+									if ($TAT_AP[trim($row['WO'])] <= $Target_TAT_AP) {
+										echo '<td bgcolor=\'#C6EFCE\'>'.$TAT_AP[trim($row['WO'])].'</td>';
+									} else {
+										echo '<td bgcolor=\'#FFC7CE\'>'.$TAT_AP[trim($row['WO'])].'</td>';
+									}
+								} else {
+									$GAP_AP[trim($row['WO'])] = ol($row['BUILD1_Start'], date('Y-m-d H:i:s'));
+									if ($GAP_AP[trim($row['WO'])] <= $Target_TAT_AP) {
+										echo '<td bgcolor=\'#C6EFCE\'>TBD</td>';
+									} else {
+										echo '<td bgcolor=\'#FFC7CE\'>TBD</td>';
+									}
+								}
 							} else {
 								echo '<td>TBD</td>';
 							}

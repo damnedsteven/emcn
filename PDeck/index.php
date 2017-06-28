@@ -28,6 +28,7 @@
 			echo '<select name="identity" id="identity">';
 				echo '<option value="Model">Model</option>';
 				echo '<option value="Client">Client</option>';
+				echo '<option value="ShipRef">ShipRef</option>';
 				echo '<option value="PLO" selected>PLO</option>';
 				echo '<option value="SO">SO</option>';
 				echo '<option value="WO">WO</option>';
@@ -138,8 +139,8 @@
 						ProductFamily
 						ON PCTMaster.Family=ProductFamily.ProductFamily AND (PCTMaster.ConfigType=ProductFamily.ConfigType OR PCTMaster.ConfigType is NULL)
 					WHERE
-						Family LIKE '%TSG%'
-						AND
+						-- Family LIKE 'TSG%'
+						-- AND
 						ProductFamily.ConfigType NOT IN ('PPS Option', 'PPS Option 3F')
 						AND
 						(SO NOT LIKE 'PRP%' OR SO IS NULL)
@@ -187,6 +188,7 @@
 				echo '<tr bgcolor=navy style=color:white>';
 					echo '<th>SO</th>';
 					echo '<th>PLO</th>';
+					echo '<th>ShipRef</th>';
 					echo '<th>Family</th>';
 					echo '<th>Model</th>';
 					echo '<th>SKU#</th>';
@@ -226,8 +228,9 @@
 						$AssyPass[trim($row['PLO'])] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['BUILD_End']), 'Y-m-d H:i:s');
 					} else {
 						if (isset($row['Pretest_Start'])) {
-							$tmp = max($row['BUILD1_End'], $row['BUILD2_End'], $row['BUILD3_End'], $row['BUILD4_End'], $row['BUILD5_End']);
-							$AssyPass[trim($row['PLO'])] = date_format(date_create_from_format('M d Y  h:i:s:ua', $tmp), 'Y-m-d H:i:s');
+							// $tmp = max($row['BUILD1_End'], $row['BUILD2_End'], $row['BUILD3_End'], $row['BUILD4_End'], $row['BUILD5_End']);
+							// $AssyPass[trim($row['PLO'])] = date_format(date_create_from_format('M d Y  h:i:s:ua', $tmp), 'Y-m-d H:i:s');
+							$AssyPass[trim($row['PLO'])] = date_format(date_create_from_format('M d Y  h:i:s:ua', $row['BUILD2_End']), 'Y-m-d H:i:s');
 						}
 					}
 					if ($row['FEFlag'] === 1 ) {
@@ -267,6 +270,12 @@
 							// PLO
 							if (isset($row['PLO'])) {
 								echo '<td>'.$row['PLO'].'</td>';
+							} else {
+								echo '<td>TBD</td>';
+							}
+							// ShipRef
+							if (isset($row['ShipRef'])) {
+								echo '<td>'.$row['ShipRef'].'</td>';
 							} else {
 								echo '<td>TBD</td>';
 							}

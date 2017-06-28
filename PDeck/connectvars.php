@@ -37,4 +37,10 @@
   define('DB_USER_RTP', 'hpetest');
   define('DB_PASSWORD_RTP', '123456');
   define('DB_NAME_RTP', 'scmdata');
+  
+  // 104 - LHF
+  define('DB_HOST_104', '16.187.225.104');
+  define('DB_USER_104', 'sa');
+  define('DB_PASSWORD_104', 'emcnsupport');
+  define('DB_NAME_104', 'VOM');
 ?>
