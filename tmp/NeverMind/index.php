@@ -86,16 +86,16 @@
 	
 		$query = "  
 					SELECT
-						File_nm,
-						F.create_dm,
-						File_Content
+						orderNumber,
+						serialNumber,
+						value
 					FROM
-						Solar.dbo.[File] S
+						ReMUS_Member
 						INNER JOIN
-						Solar_Files.dbo.[File] F
-						ON S.File_ky = F.File_ky
+						ReMUS_ImageStor
+						ON ReMUS_Member.memberID = ReMUS_ImageStor.memberID
 					WHERE
-						File_nm = '6CU7316YLF_ary.xml'
+						name = 'act_cfg.xml'
 						AND
 						--serialNumber = '6CU6467TT1'
 					";

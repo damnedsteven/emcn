@@ -23,7 +23,7 @@
 
 	echo '<div class="input">';
 	
-		echo '<form method="get" action="'.$_SERVER['PHP_SELF'].'">';
+		echo '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
 			//search by 
 			echo '<select name="identity" id="identity">';
 				echo '<option value="Model">Model</option>';
@@ -35,13 +35,13 @@
 				echo '<option value="SN">SN</option>';
 			echo '</select> &nbsp';
 			
-			if (isset($_GET['identity'])) {
+			if (isset($_POST['identity'])) {
 				echo '<script type="text/javascript">';
-					echo 'document.getElementById(\'identity\').value = "'.$_GET['identity'].'"';
+					echo 'document.getElementById(\'identity\').value = "'.$_POST['identity'].'"';
 				echo '</script>';
 			}
 			
-			echo '<input id="entry" name="entry" value="'.htmlspecialchars($_GET['entry']).'"/> &nbsp';
+			echo '<input id="entry" name="entry" value="'.htmlspecialchars($_POST['entry']).'"/> &nbsp';
 			
 			//select time base
 			echo '<select name="base" id="base">';
@@ -51,9 +51,9 @@
 				echo '<option value="PGITime">PGI</option>';
 			echo '</select>';
 			
-			if (isset($_GET['base'])) {
+			if (isset($_POST['base'])) {
 				echo '<script type="text/javascript">';
-					echo 'document.getElementById(\'base\').value = "'.$_GET['base'].'"';
+					echo 'document.getElementById(\'base\').value = "'.$_POST['base'].'"';
 				echo '</script>';
 			}
 			
@@ -61,16 +61,16 @@
 			
 			//time input box
 			echo '<label for="startdate"> From : </label><input id="startdate" name="startdate" type="date" value="'.date("Y-m-d").'"/> &nbsp';
-			if (isset($_GET['startdate'])) {
+			if (isset($_POST['startdate'])) {
 				echo '<script type="text/javascript">';
-					echo 'document.getElementById(\'startdate\').value = "'.$_GET['startdate'].'"';
+					echo 'document.getElementById(\'startdate\').value = "'.$_POST['startdate'].'"';
 				echo '</script>';
 			}
 			
 			echo '<label for="enddate"> To : </label><input id="enddate" name="enddate" type="date" value="'.date("Y-m-d",strtotime(date("Y-m-d")."+1 days")).'"/> &nbsp';
-			if (isset($_GET['enddate'])) {
+			if (isset($_POST['enddate'])) {
 				echo '<script type="text/javascript">';
-					echo 'document.getElementById(\'enddate\').value = "'.$_GET['enddate'].'"';
+					echo 'document.getElementById(\'enddate\').value = "'.$_POST['enddate'].'"';
 				echo '</script>';
 			}
 			
@@ -89,22 +89,22 @@
 	echo '</br>';
 	
 	// Get post data
-	$submit = $_GET['submit'];
-	$startdate = $_GET['startdate'];
-	$enddate = $_GET['enddate'];
-	$base = $_GET['base'];
-	$identity = $_GET['identity'];
+	$submit = $_POST['submit'];
+	$startdate = $_POST['startdate'];
+	$enddate = $_POST['enddate'];
+	$base = $_POST['base'];
+	$identity = $_POST['identity'];
 	
 	// Enable multiple PLO/SO search
-	if (in_array($identity, array('PLO', 'SO', 'DN')) && !empty($_GET['entry'])) {
-		$entries = explode(" ",$_GET['entry']);
+	if (in_array($identity, array('PLO', 'SO', 'DN')) && !empty($_POST['entry'])) {
+		$entries = explode(" ",$_POST['entry']);
 		$entryArr = array();
 		foreach ($entries as $v) {
 			array_push($entryArr,trim($v));
 		} 
 		$entry = "'".implode("','", $entryArr)."'";
 	} else {
-		$entry = trim($_GET['entry']);
+		$entry = trim($_POST['entry']);
 	}
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 	
@@ -122,7 +122,7 @@
 						[Complexity Groups] AS Complexity
 					FROM
 						PCTMaster
-						LEFT JOIN
+						INNER JOIN
 						( SELECT 
 							PLO,
 							MAX (CASE WHEN Operation = 'BF20_TSG_BUILD1' THEN Operation_End END) BUILD1_End,
@@ -186,7 +186,7 @@
 				    HandoverTime DESC
 			"; 
 	}
-// var_dump($query);
+
 	if (true) {		
 		echo '<table width=100%>';
 		echo '<tr>';

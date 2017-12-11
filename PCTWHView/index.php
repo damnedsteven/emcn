@@ -333,6 +333,15 @@
 							} else {
 								echo '<td>TBD</td>';
 							}
+							// if (isset($row['Picklist_PL'])) {
+								// echo '<td>'.$row['Picklist_PL'].'</td>'; //-----------------------------------------生产车间
+							// } else {
+								// if (isset($row['PF_PL'])) {
+									// echo '<td>'.$row['PF_PL'].'</td>';
+								// } else {
+									// echo '<td>TBD</td>';
+								// }
+							// }
 							if (isset($row['PF_PL'])) {
 								echo '<td>'.$row['PF_PL'].'</td>'; //-----------------------------------------生产车间
 							} else {

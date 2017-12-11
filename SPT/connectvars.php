@@ -38,15 +38,9 @@
   define('DB_PASSWORD_RTP', '123456');
   define('DB_NAME_RTP', 'scmdata');
   
-  // 64 - DM
-  define('DB_HOST_DM', '16.187.224.64');
-  define('DB_USER_DM', 'dmrw');
-  define('DB_PASSWORD_DM', 'the-dude');
-  define('DB_NAME_DM', 'the_Vault');
-  
-  // 226.128 - SOLAR
-  define('DB_HOST_SOLAR', '16.187.226.128');
-  define('DB_USER_SOLAR', 'sa');
-  define('DB_PASSWORD_SOLAR', 'Support2015');
-  define('DB_NAME_SOLAR', 'Solar');
+  // 104 - LHF
+  define('DB_HOST_104', '16.187.225.104');
+  define('DB_USER_104', 'sa');
+  define('DB_PASSWORD_104', 'emcnsupport');
+  define('DB_NAME_104', 'VOM');
 ?>
