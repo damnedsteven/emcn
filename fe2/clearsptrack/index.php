@@ -4,6 +4,15 @@
 <title>Clear Rack</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript" src="dropdownBox.js"></script>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 15px;
+}
+</style>
 </head>
 <body>
 <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
@@ -80,7 +89,7 @@ if (isset($_POST['sn'])) {
 		$dbc = mssql_connect(DB_HOST, DB_USER, DB_PASSWORD) or die('ERROR: connect db error: ' . mssql_get_last_message());
 		mssql_select_db(DB_NAME,$dbc) or die('ERROR: can not open db table: ' . mssql_get_last_message());
 		
-		$query = 'select R.Work_Object Rack,  U.Serial_Number SN, UI.Status_fg Status
+		$query = 'select R.Work_Object Rack,  U.Serial_Number SN, UI.Status_fg Status, UI.create_dm Created, GETDATE() Now, DATEDIFF(hour, UI.create_dm, GETDATE()) LastedHours
 					from 
 					UUT_Instance UI
 					left join
@@ -90,7 +99,7 @@ if (isset($_POST['sn'])) {
 					Rack R
 					on UI.Rack_ky = R.Rack_ky
 					where R.Work_Object LIKE "R-%-%" and UI.active_fg = 1
-					order by R.Work_Object';
+					order by LastedHours DESC, R.Work_Object';
 
 		$result = mssql_query($query);
 		
