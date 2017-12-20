@@ -21,7 +21,7 @@ if (isset($argv[1]) && $argv[1]=='ok') {
 
 	$query = "  
 				update UUT_Instance 
-				set active_fg = 0
+				set active_fg = 0, Status_fg = 'C'
 				where active_fg = 1 and Rack_ky in (select Rack_ky from Rack where Work_Object LIKE '{$rack}') and DATEDIFF(hour, create_dm, GETDATE())>{$hour}
 	";
 	

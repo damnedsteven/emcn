@@ -57,7 +57,7 @@ if (isset($_POST['sn'])) {
 		
 		$query = "  
 					update UUT_Instance 
-					set active_fg = 0
+					set active_fg = 0, Status_fg = 'C'
 					where Rack_ky in (select Rack_ky from Rack where Work_Object LIKE '{$rack}') and UUT_ky = (select UUT_ky from UUT where Serial_Number = '{$sn}')
 		";
 		
