@@ -1,1 +1,1 @@
-curl http://16.187.224.112:8080/Yi/PCTDataCenter/inserter.php?days=1
+curl http://16.187.229.14/emcn/PCTDataCenter/inserter.php?days=1

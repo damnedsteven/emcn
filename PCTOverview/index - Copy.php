@@ -157,7 +157,7 @@
 					--(SELECT DISTINCT [Complexity Groups], [Sales Order ID], [Sales Order Line Item ID] FROM [104].VOM.dbo.DailyPROExtraction WHERE [Plant Code] = 'BF02' AND [Higher Level Item Flag] = 'Y' AND [Base Quantity] <> '0') T
 					[104].VOM.dbo.DailyPROExtraction T
 					ON PCTMaster.SO collate Chinese_PRC_CI_AS=T.[Sales Order ID] AND PCTMaster.Line collate Chinese_PRC_CI_AS=T.[Sales Order Line Item ID]
-					INNER JOIN
+					LEFT JOIN
 					ComplexityGroup
 					ON T.[Complexity Groups] = ComplexityGroup.Complexity collate Chinese_PRC_CI_AS
 				  WHERE 

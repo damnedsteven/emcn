@@ -21,19 +21,22 @@
 		echo "No New Order <br>";
 		
 	} else {
-		$strArr = array();
-			
-		foreach ($order as $k => $v) {
-			array_push($strArr, "IF NOT EXISTS (SELECT PLO FROM PCTMaster WHERE PLO = '{$v['PLO#']}') INSERT INTO PCTMaster (PLO, Line, SO, BirthDate, CreateTime, PLOQTY, Family, BPO, ShipRef, Product, PL) VALUES ('{$v['PLO#']}', '{$v['Line#']}', '{$v['SO#']}', '{$v['RTP Date']}', GETDATE(), '{$v['Qty']}', '{$v['Product Family']}', '{$v['OSP#']}', '{$v['Shipref']}', '{$v['Part#']}', '{$v['Product Line']}')"); 
-		}
+		// $strArr = array();
 		
-		$query = implode(' ', array_reverse($strArr));
-
 		// Connect to 112 DB
 		$dbc = mssql_connect(DB_HOST_112, DB_USER_112, DB_PASSWORD_112) or die("connect db error");	
 		mssql_select_db(DB_NAME_112,$dbc) or die('can not open db table');
-
-		mssql_query($query,$dbc) or die('search db error ');
+			
+		foreach ($order as $k => $v) {
+			// array_push($strArr, "IF NOT EXISTS (SELECT PLO FROM PCTMaster WHERE PLO = '{$v['PLO#']}') INSERT INTO PCTMaster (PLO, Line, SO, BirthDate, CreateTime, PLOQTY, Family, BPO, ShipRef, Product, PL) VALUES ('{$v['PLO#']}', '{$v['Line#']}', '{$v['SO#']}', '{$v['RTP Date']}', GETDATE(), '{$v['Qty']}', '{$v['Product Family']}', '{$v['OSP#']}', '{$v['Shipref']}', '{$v['Part#']}', '{$v['Product Line']}')"); 
+			$query = "
+				IF NOT EXISTS (SELECT PLO FROM PCTMaster WHERE PLO = '{$v['PLO#']}') INSERT INTO PCTMaster (PLO, Line, SO, BirthDate, CreateTime, PLOQTY, Family, BPO, ShipRef, Product, PL) VALUES ('{$v['PLO#']}', '{$v['Line#']}', '{$v['SO#']}', '{$v['RTP Date']}', GETDATE(), '{$v['Qty']}', '{$v['Product Family']}', '{$v['OSP#']}', '{$v['Shipref']}', '{$v['Part#']}', '{$v['Product Line']}')
+			";
+			
+			mssql_query($query,$dbc) or die('search db error ');			
+		}
+		
+		// $query = implode(' ', array_reverse($strArr));
 
 		mssql_close($dbc);
 	}

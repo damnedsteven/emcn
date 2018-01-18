@@ -16,6 +16,8 @@ if (isset($argv[1]) && $argv[1]=='solar') {
 	// $sn = htmlspecialchars($_POST['sn']);
 	// $sn = trim($sn);
 	$rack = "R-%-%";
+	$rack2 = "Blade-%-%";
+	$rack3 = "Rack%-%-%";
 	
 	$hour = 5;
 	
@@ -23,13 +25,13 @@ if (isset($argv[1]) && $argv[1]=='solar') {
 				select Serial_Number from UUT
 				where UUT_ky in (
 								select UUT_ky from UUT_Instance
-								where active_fg = 1 and Rack_ky in (select Rack_ky from Rack where Work_Object LIKE '{$rack}') and DATEDIFF(hour, create_dm, GETDATE())>{$hour})
+								where active_fg = 1 and Rack_ky in (select Rack_ky from Rack where Work_Object LIKE '{$rack}' OR Work_Object LIKE '{$rack2}' OR Work_Object LIKE '{$rack3}') and DATEDIFF(hour, create_dm, GETDATE())>{$hour})
 	";
 
 	$query = "  
 				update UUT_Instance 
 				set active_fg = 0, Status_fg = 'C'
-				where active_fg = 1 and Rack_ky in (select Rack_ky from Rack where Work_Object LIKE '{$rack}') and DATEDIFF(hour, create_dm, GETDATE())>{$hour}
+				where active_fg = 1 and Rack_ky in (select Rack_ky from Rack where Work_Object LIKE '{$rack}' OR Work_Object LIKE '{$rack2}' OR Work_Object LIKE '{$rack3}') and DATEDIFF(hour, create_dm, GETDATE())>{$hour}
 	";	
 	
 	$dbc = mssql_connect(DB_HOST, DB_USER, DB_PASSWORD) or die('ERROR: connect db error: ' . mssql_get_last_message());

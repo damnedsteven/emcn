@@ -114,9 +114,7 @@
 		require_once('parser.php');//-----------------------------------------For Getting SFNG Data
 
 		if (isset($Attr)) {
-			// Connect to 112 DB
-			$dbc = mssql_connect(DB_HOST_112, DB_USER_112, DB_PASSWORD_112) or die("connect db error");	
-			mssql_select_db(DB_NAME_112,$dbc) or die('can not open db table');
+			$strArr = array();
 			
 			foreach ($Attr as $k => $v) {
 				$clauseArr = array();
@@ -131,15 +129,20 @@
 				$clause = implode(',', $clauseArr);
 
 				if (!empty($k) && !empty($clause)) {
-					$query = "
-						UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}'
-					";
-					
-					mssql_query($query,$dbc) or die('search db error ');
+					array_push($strArr, "UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}' "); 
 				}
 			}
+			$query = implode(' ', $strArr);
 			
-			mssql_close($dbc);
+			if (!empty($query)) {
+				// Connect to 112 DB
+				$dbc = mssql_connect(DB_HOST_112, DB_USER_112, DB_PASSWORD_112) or die("connect db error");	
+				mssql_select_db(DB_NAME_112,$dbc) or die('can not open db table');
+
+				mssql_query($query,$dbc) or die('search db error ');
+
+				mssql_close($dbc);
+			}
 		}
 	}
 	// mssql_free_result($data);

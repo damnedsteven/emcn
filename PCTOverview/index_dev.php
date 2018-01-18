@@ -137,7 +137,8 @@
 					CusName,
 					EndCusName,
 					ShippingName,
-					Owner
+					Owner,
+					CASE WHEN FEFlag=1 THEN MaxPCT+1 ELSE MaxPCT END MaxPCT
 				  FROM 
 					PCTMaster
 					LEFT JOIN
@@ -147,17 +148,18 @@
 					BPOCustomer
 					ON PCTMaster.BPO=BPOCustomer.BPO
 					LEFT JOIN
+					ProductFamily
+					ON PCTMaster.Family=ProductFamily.ProductFamily AND (PCTMaster.ConfigType=ProductFamily.ConfigType OR PCTMaster.ConfigType is NULL)
+					LEFT JOIN
 					TechDirect.dbo.TechDirect
 					ON PCTMaster.TDNo=TechDirect.id
 					LEFT JOIN
+					--(SELECT DISTINCT [Complexity Groups], [Sales Order ID], [Sales Order Line Item ID] FROM [104].VOM.dbo.DailyPROExtraction WHERE [Plant Code] = 'BF02' AND [Higher Level Item Flag] = 'Y' AND [Base Quantity] <> '0') T
 					[104].VOM.dbo.DailyPROExtraction T
 					ON PCTMaster.SO collate Chinese_PRC_CI_AS=T.[Sales Order ID] AND PCTMaster.Line collate Chinese_PRC_CI_AS=T.[Sales Order Line Item ID]
-					LEFT JOIN
+					INNER JOIN
 					ComplexityGroup
-					ON Complexity = ComplexityGroup.Complexity
-					LEFT JOIN
-					(SELECT DISTINCT ProductFamily, Owner FROM ProductFamily) P
-					ON PCTMaster.Family=P.ProductFamily
+					ON T.[Complexity Groups] = ComplexityGroup.Complexity collate Chinese_PRC_CI_AS
 				  WHERE 
 					";
 	if (isset($submit)) {
@@ -207,7 +209,7 @@
 				   --PGITime DESC
 		";			
 	}	
-	print_r($query);
+	// print_r($query);
 	// for PCT Target to BPO
 	$query2 = "SELECT
 			    DN,

@@ -98,11 +98,11 @@ if (isset($_POST['sn'])) {
 					left join
 					Rack R
 					on UI.Rack_ky = R.Rack_ky
-					where R.Work_Object LIKE "R-%-%" and UI.active_fg = 1
+					where (R.Work_Object LIKE "R-%-%" or R.Work_Object LIKE "Blade-%-%" or R.Work_Object LIKE "Rack%-%-%" or R.Work_Object LIKE "Rack%-%-%-%") and UI.active_fg = 1
 					order by LastedHours DESC, R.Work_Object';
 
 		$result = mssql_query($query);
-		
+// var_dump($query);		
 		if (!$result) 
 		{
 			$message = 'ERROR: ' . mssql_get_last_message();

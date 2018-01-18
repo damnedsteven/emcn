@@ -1,1 +1,1 @@
-curl http://16.187.224.112:8080/Yi/PCTDataCenter/inserter_oct.php
+curl http://16.187.229.14/emcn/PCTDataCenter/inserter_oct.php

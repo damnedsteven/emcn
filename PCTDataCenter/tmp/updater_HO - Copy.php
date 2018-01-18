@@ -27,15 +27,15 @@
 	$query = "  SELECT 
 					DISTINCT 
 					PLO,
-					CASE WHEN BirthDate is null THEN 0 ELSE 1 END AS Info_BKPL,
+					CASE WHEN FEFlag is null THEN 0 ELSE 1 END AS Info_BKPL,
 					CASE WHEN LineInputTime is null THEN 0 ELSE 1 END AS Info_WH,
 					CASE WHEN HandoverTime is null THEN 0 ELSE 1 END AS Info_HO,
 					CASE WHEN PGITime is null THEN 0 ELSE 1 END AS Info_PGI
 				FROM 
 					PCTMaster
 				WHERE 
-					--DATEDIFF(n,ImportTime,GETDATE()) <= 60*24*{$days}
-					ImportTime BETWEEN DATEADD(day,-{$days}-1,GETDATE()) AND DATEADD(day,-{$days},GETDATE())
+					--DATEDIFF(n,BirthDate,GETDATE()) <= 60*24*{$days}
+					BirthDate BETWEEN DATEADD(day,-{$days}-1,GETDATE()) AND DATEADD(day,-{$days},GETDATE())
 					--AND
 					--PGITime is null
 					"; 
@@ -111,17 +111,15 @@
 			}
 		}
 		
-		require_once('parser.php');//-----------------------------------------For Getting SFNG Data
+		require_once('parser_HO.php');//-----------------------------------------For Getting SFNG Data
 
 		if (isset($Attr)) {
-			// Connect to 112 DB
-			$dbc = mssql_connect(DB_HOST_112, DB_USER_112, DB_PASSWORD_112) or die("connect db error");	
-			mssql_select_db(DB_NAME_112,$dbc) or die('can not open db table');
+			$strArr = array();
 			
 			foreach ($Attr as $k => $v) {
 				$clauseArr = array();
 				
-				$alias = array('SO' => 'Sales Order', 'BPO' => 'Merging Group', 'Family' => 'Family', 'Model' => 'Product Model', 'Product' => 'Master Product', 'BirthDate' => 'Birth Stamp', 'OnlineNo' => 'OnlineNo', 'PLOQTY' => 'PLOQTY', 'PL' => 'PL', 'WHInputTime' => 'WHInputTime', 'WHUpdateTime' => 'WHUpdateTime', 'LineInputTime' => 'LineInputTime', 'FEFlag' => 'FEFlag', 'ConfigType' => 'ConfigType', 'DN' => 'Backplane Order #', 'HandoverTime' => 'Handover Date', 'Putaway' => 'Putaway', 'ShipRef' => 'ShipRef', 'PGITime' => 'PGI_DATE'); // define parsing item
+				$alias = array('HandoverTime' => 'Handover Date', 'Putaway' => 'Putaway', 'PGITime' => 'PGI_DATE'); // define parsing item
 				
 				foreach ($alias as $a => $b) {
 					if (isset($v[$b]) && (!empty($v[$b]) || $v[$b] == '&nbsp')) {
@@ -131,15 +129,20 @@
 				$clause = implode(',', $clauseArr);
 
 				if (!empty($k) && !empty($clause)) {
-					$query = "
-						UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}'
-					";
-					
-					mssql_query($query,$dbc) or die('search db error ');
+					array_push($strArr, "UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}' "); 
 				}
 			}
+			$query = implode(' ', $strArr);
 			
-			mssql_close($dbc);
+			if (!empty($query)) {
+				// Connect to 112 DB
+				$dbc = mssql_connect(DB_HOST_112, DB_USER_112, DB_PASSWORD_112) or die("connect db error");	
+				mssql_select_db(DB_NAME_112,$dbc) or die('can not open db table');
+
+				mssql_query($query,$dbc) or die('search db error ');
+
+				mssql_close($dbc);
+			}
 		}
 	}
 	// mssql_free_result($data);

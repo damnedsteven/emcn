@@ -138,22 +138,19 @@
 		mssql_close($dbc); 
 
 		if (isset($RTP)) {
-			// $strArr = array();
+			$strArr = array();
 			
+			foreach ($RTP as $k => $v) {
+				array_push($strArr, "IF NOT EXISTS (SELECT PLO FROM PCTMaster WHERE PLO = '{$k}') INSERT INTO PCTMaster (PLO, SO, ImportTime, CreateTime) VALUES ('{$k}', '{$v['SO']}', '{$v['ImportTime']}', GETDATE())"); 
+			}
+			
+			$query = implode(' ', $strArr);
+
 			// Connect to 112 DB
 			$dbc = mssql_connect(DB_HOST_112, DB_USER_112, DB_PASSWORD_112) or die("connect db error");	
 			mssql_select_db(DB_NAME_112,$dbc) or die('can not open db table');
-			
-			foreach ($RTP as $k => $v) {
-				// array_push($strArr, "IF NOT EXISTS (SELECT PLO FROM PCTMaster WHERE PLO = '{$k}') INSERT INTO PCTMaster (PLO, SO, ImportTime, CreateTime) VALUES ('{$k}', '{$v['SO']}', '{$v['ImportTime']}', GETDATE())"); 
-				
-				$query = "
-					IF NOT EXISTS (SELECT PLO FROM PCTMaster WHERE PLO = '{$k}') INSERT INTO PCTMaster (PLO, SO, ImportTime, CreateTime) VALUES ('{$k}', '{$v['SO']}', '{$v['ImportTime']}', GETDATE())
-				";
-				
-				mssql_query($query,$dbc) or die('search db error ');
-			}		
-			// $query = implode(' ', $strArr);
+
+			mssql_query($query,$dbc) or die('search db error ');
 
 			mssql_close($dbc);
 		}

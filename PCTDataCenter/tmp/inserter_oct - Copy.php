@@ -72,20 +72,19 @@
 	require_once('parser_sn.php');//-----------------------------------------For Getting SFNG Data for SN
 
 	if (isset($OperationTime)) {
-		// $strArr = array();
+		$strArr = array();
 		
 		foreach ($OperationTime as $k => $v) {
 			foreach ($v as $subk => $subv) {
 				foreach ($subv as $subsubk => $subsubv) {
-					// array_push($strArr, "IF NOT EXISTS (SELECT * FROM OCT WHERE PLO = '{$k}' AND WO = '{$subk}' AND Operation = '{$subsubk}') INSERT INTO OCT (PLO, WO, Operation, Operation_Start, Operation_End, CreateTime, Priority, SN) VALUES ('{$k}', '{$subk}', '{$subsubk}', '{$subsubv['start']}', '{$subsubv['end']}', GETDATE(), '{$subsubv['priority']}', '{$SerialNumber[$subk]}')"); 
-					// $query2 = implode(' ', $strArr);
-					$query2 = "
-						IF NOT EXISTS (SELECT * FROM OCT WHERE PLO = '{$k}' AND WO = '{$subk}' AND Operation = '{$subsubk}') INSERT INTO OCT (PLO, WO, Operation, Operation_Start, Operation_End, CreateTime, Priority, SN) VALUES ('{$k}', '{$subk}', '{$subsubk}', '{$subsubv['start']}', '{$subsubv['end']}', GETDATE(), '{$subsubv['priority']}', '{$SerialNumber[$subk]}')
-					";
-					mssql_query($query2,$dbc) or die('search db error ');
+					array_push($strArr, "IF NOT EXISTS (SELECT * FROM OCT WHERE PLO = '{$k}' AND WO = '{$subk}' AND Operation = '{$subsubk}') 
+											INSERT INTO OCT (PLO, WO, Operation, Operation_Start, Operation_End, CreateTime, Priority, SN) VALUES ('{$k}', '{$subk}', '{$subsubk}', '{$subsubv['start']}', '{$subsubv['end']}', GETDATE(), '{$subsubv['priority']}', '{$SerialNumber[$subk]}')"); 
 				}
 			}
 		}
+		
+		$query2 = implode(' ', $strArr);
+		mssql_query($query2,$dbc) or die('search db error ');
 		
 		mssql_close($dbc);
 	}
