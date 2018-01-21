@@ -4,7 +4,7 @@
 
 	date_default_timezone_set('Asia/Shanghai');
 	
-	ini_set('max_execution_time', 60*60); // 60 minutes
+	ini_set('max_execution_time', 1500); //1500 seconds = 25 minutes
 	
 	ini_set('mssql.charset', 'UTF-8');
 	
@@ -138,18 +138,23 @@
 		mssql_close($dbc); 
 
 		if (isset($RTP)) {
+			// $strArr = array();
+			
 			// Connect to 112 DB
 			$dbc = mssql_connect(DB_HOST_112, DB_USER_112, DB_PASSWORD_112) or die("connect db error");	
 			mssql_select_db(DB_NAME_112,$dbc) or die('can not open db table');
 			
 			foreach ($RTP as $k => $v) {
+				// array_push($strArr, "IF NOT EXISTS (SELECT PLO FROM PCTMaster WHERE PLO = '{$k}') INSERT INTO PCTMaster (PLO, SO, ImportTime, CreateTime) VALUES ('{$k}', '{$v['SO']}', '{$v['ImportTime']}', GETDATE())"); 
+				
 				$query = "
 					IF NOT EXISTS (SELECT PLO FROM PCTMaster WHERE PLO = '{$k}') INSERT INTO PCTMaster (PLO, SO, ImportTime, CreateTime) VALUES ('{$k}', '{$v['SO']}', '{$v['ImportTime']}', GETDATE())
 				";
 				
 				mssql_query($query,$dbc) or die('search db error ');
-			}
-			
+			}		
+			// $query = implode(' ', $strArr);
+
 			mssql_close($dbc);
 		}
 	}

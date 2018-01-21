@@ -80,8 +80,7 @@
 						PL,
 						CONVERT(VARCHAR(24),WHInputTime,120) WHInputTime,
 						CONVERT(VARCHAR(24),WHUpdateTime,120) WHUpdateTime,
-						CONVERT(VARCHAR(24),LineInputTime,120) LineInputTime,
-						CONVERT(VARCHAR(24),MailSendTime,120) MailSendTime
+						CONVERT(VARCHAR(24),LineInputTime,120) LineInputTime
 					FROM 
 						[WH-PLOdetails]
 						LEFT JOIN
@@ -105,15 +104,18 @@
 					$Attr[trim($row['PLO'])]['WHInputTime'] = $row['WHInputTime'];
 					$Attr[trim($row['PLO'])]['WHUpdateTime'] = $row['WHUpdateTime'];
 					$Attr[trim($row['PLO'])]['LineInputTime'] = $row['LineInputTime'];
-					$Attr[trim($row['PLO'])]['MailSendTime'] = $row['MailSendTime'];
 				}
 
 				mssql_free_result($data);
 				mssql_close($dbc); 
 			}
 		}
+		
+		require_once('parser_HO.php');//-----------------------------------------For Getting SFNG Data
 
 		if (isset($Attr)) {
+			// $strArr = array();
+			
 			// Connect to 112 DB
 			$dbc = mssql_connect(DB_HOST_112, DB_USER_112, DB_PASSWORD_112) or die("connect db error");	
 			mssql_select_db(DB_NAME_112,$dbc) or die('can not open db table');
@@ -121,7 +123,7 @@
 			foreach ($Attr as $k => $v) {
 				$clauseArr = array();
 				
-				$alias = array('OnlineNo' => 'OnlineNo', 'WHInputTime' => 'WHInputTime', 'WHUpdateTime' => 'WHUpdateTime', 'MailSendTime' => 'MailSendTime', 'LineInputTime' => 'LineInputTime'); // define parsing item
+				$alias = array('HandoverTime' => 'Handover Date', 'Putaway' => 'Putaway', 'PGITime' => 'PGI_DATE'); // define parsing item
 				
 				foreach ($alias as $a => $b) {
 					if (isset($v[$b]) && (!empty($v[$b]) || $v[$b] == '&nbsp')) {
@@ -131,7 +133,9 @@
 				$clause = implode(',', $clauseArr);
 
 				if (!empty($k) && !empty($clause)) {
-					$query = "UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}'";		
+					$query = "
+						UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}'
+					";
 					
 					mssql_query($query,$dbc) or die('search db error ');
 				}
@@ -140,8 +144,6 @@
 			mssql_close($dbc);
 		}
 	}
-	// mssql_free_result($data);
-	// mssql_close($dbc); 
 	
 	// total
 	echo 'Total execution time in seconds: ' . (microtime(true) - $time_start);

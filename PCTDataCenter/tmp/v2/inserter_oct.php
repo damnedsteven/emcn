@@ -46,11 +46,9 @@
 				FROM 
 					PCTMaster
 				WHERE 
-					-- WHUpdateTime IS NOT NULL
-					WHUpdateTime > dateadd(day,datediff(day,30,GETDATE()),0)
+					WHUpdateTime IS NOT NULL
 					AND
-					PGITime IS NULL
-					-- HandoverTime IS NULL
+					HandoverTime IS NULL
 					-- AND
 					-- FEFlag = 1
 					"; 
@@ -80,10 +78,10 @@
 			foreach ($v as $subk => $subv) {
 				foreach ($subv as $subsubk => $subsubv) {
 					// array_push($strArr, "IF NOT EXISTS (SELECT * FROM OCT WHERE PLO = '{$k}' AND WO = '{$subk}' AND Operation = '{$subsubk}') INSERT INTO OCT (PLO, WO, Operation, Operation_Start, Operation_End, CreateTime, Priority, SN) VALUES ('{$k}', '{$subk}', '{$subsubk}', '{$subsubv['start']}', '{$subsubv['end']}', GETDATE(), '{$subsubv['priority']}', '{$SerialNumber[$subk]}')"); 
+					// $query2 = implode(' ', $strArr);
 					$query2 = "
 						IF NOT EXISTS (SELECT * FROM OCT WHERE PLO = '{$k}' AND WO = '{$subk}' AND Operation = '{$subsubk}') INSERT INTO OCT (PLO, WO, Operation, Operation_Start, Operation_End, CreateTime, Priority, SN) VALUES ('{$k}', '{$subk}', '{$subsubk}', '{$subsubv['start']}', '{$subsubv['end']}', GETDATE(), '{$subsubv['priority']}', '{$SerialNumber[$subk]}')
 					";
-					
 					mssql_query($query2,$dbc) or die('search db error ');
 				}
 			}

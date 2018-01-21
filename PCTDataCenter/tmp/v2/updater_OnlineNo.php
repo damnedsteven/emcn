@@ -80,8 +80,7 @@
 						PL,
 						CONVERT(VARCHAR(24),WHInputTime,120) WHInputTime,
 						CONVERT(VARCHAR(24),WHUpdateTime,120) WHUpdateTime,
-						CONVERT(VARCHAR(24),LineInputTime,120) LineInputTime,
-						CONVERT(VARCHAR(24),MailSendTime,120) MailSendTime
+						CONVERT(VARCHAR(24),LineInputTime,120) LineInputTime
 					FROM 
 						[WH-PLOdetails]
 						LEFT JOIN
@@ -105,7 +104,6 @@
 					$Attr[trim($row['PLO'])]['WHInputTime'] = $row['WHInputTime'];
 					$Attr[trim($row['PLO'])]['WHUpdateTime'] = $row['WHUpdateTime'];
 					$Attr[trim($row['PLO'])]['LineInputTime'] = $row['LineInputTime'];
-					$Attr[trim($row['PLO'])]['MailSendTime'] = $row['MailSendTime'];
 				}
 
 				mssql_free_result($data);
@@ -121,7 +119,7 @@
 			foreach ($Attr as $k => $v) {
 				$clauseArr = array();
 				
-				$alias = array('OnlineNo' => 'OnlineNo', 'WHInputTime' => 'WHInputTime', 'WHUpdateTime' => 'WHUpdateTime', 'MailSendTime' => 'MailSendTime', 'LineInputTime' => 'LineInputTime'); // define parsing item
+				$alias = array('OnlineNo' => 'OnlineNo', 'WHInputTime' => 'WHInputTime', 'WHUpdateTime' => 'WHUpdateTime', 'LineInputTime' => 'LineInputTime'); // define parsing item
 				
 				foreach ($alias as $a => $b) {
 					if (isset($v[$b]) && (!empty($v[$b]) || $v[$b] == '&nbsp')) {
@@ -131,7 +129,9 @@
 				$clause = implode(',', $clauseArr);
 
 				if (!empty($k) && !empty($clause)) {
-					$query = "UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}'";		
+					$query = "
+						UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}'
+					";
 					
 					mssql_query($query,$dbc) or die('search db error ');
 				}

@@ -3,13 +3,13 @@
 	ini_set('max_execution_time', 12000); //12000 seconds = 200 minutes
 	ini_set('pcre.backtrack_limit', '10485760'); // 10mb limit
 
-	if (isset($PLOArr)) {		
-		foreach ($PLOArr as $PLO) {
-			// $PLO = '5001901512';
+	// if (isset($PLOArr)) {		
+		// foreach ($PLOArr as $PLO) {
+			$PLO = '5002349565';
 			
 			// -------------------------------------------------------------------------------------------------- Parse url_handover (HO)
-			if ($Info[$PLO]['HO'] == 0 || $Info[$PLO]['PGI'] == 0) {
-				// if (true) {
+			// if ($Info[$PLO]['HO'] == 0 || $Info[$PLO]['PGI'] == 0) {
+				if (true) {
 				// To get Handover time, putaway
 				$url_handover = 'http://shopfloor-apj.sfng.int.hpe.com/sfweb/DefaultQueryReport?queryType=handover&plannedOrderPattern='.$PLO;
 				
@@ -81,8 +81,8 @@
 			}
 			
 			// -------------------------------------------------------------------------------------------------- Parse url_tatStatus (PGI)
-			if ($Info[$PLO]['PGI'] == 0) {
-				// if (true) {
+			// if ($Info[$PLO]['PGI'] == 0) {
+				if (true) {
 				// To get shipref, PGI time
 				$url_tatStatus = 'http://shopfloor-apj.sfng.int.hpe.com/sfweb/DefaultQueryReport?queryType=tatStatus&plannedOrderPattern='.$PLO;
 				
@@ -121,7 +121,7 @@
 					echo 'SFNG_tatStatus Page Not Found';
 				}
 			}
-		}
-	}
-	// var_dump($Attr);
+		// }
+	// }
+	var_dump($Attr);
 ?>

@@ -131,9 +131,7 @@
 				$clause = implode(',', $clauseArr);
 
 				if (!empty($k) && !empty($clause)) {
-					$query = "
-						UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}'
-					";
+					$query = "UPDATE PCTMaster SET {$clause} WHERE PLO='{$k}'";
 					
 					mssql_query($query,$dbc) or die('search db error ');
 				}
