@@ -110,7 +110,7 @@
 			";
 	} 
 	else {
-			$query .="  File_nm IN ({$SN})
+			$query .="  SUBSTRING(File_nm, 1, 10) IN ({$SN})
 			";
 	}
 // var_dump($query);
