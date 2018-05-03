@@ -50,6 +50,9 @@ if (isset($_POST['sn'])) {
 	$sn = htmlspecialchars($_POST['sn']);
 	$sn = trim($sn);
 	$rack = "R-%-%";
+	$rack2 = "Blade-%-%";
+	$rack3 = "Rack%-%-%";
+	$rack4 = "Rack%-%-%-%";
 	if(strlen($sn)<>10 && substr($sn,0,6)<>'VMware'){
 		echo "Invalid SN#!<br />";
 		exit;
@@ -58,7 +61,7 @@ if (isset($_POST['sn'])) {
 		$query = "  
 					update UUT_Instance 
 					set active_fg = 0, Status_fg = 'C'
-					where Rack_ky in (select Rack_ky from Rack where Work_Object LIKE '{$rack}') and UUT_ky = (select UUT_ky from UUT where Serial_Number = '{$sn}')
+					where Rack_ky in (select Rack_ky from Rack where Work_Object LIKE '{$rack}' OR Work_Object LIKE '{$rack2}' OR Work_Object LIKE '{$rack3}' OR Work_Object LIKE '{$rack4}') and UUT_ky = (select UUT_ky from UUT where Serial_Number = '{$sn}')
 		";
 		
 		$dbc = mssql_connect(DB_HOST, DB_USER, DB_PASSWORD) or die('ERROR: connect db error: ' . mssql_get_last_message());

